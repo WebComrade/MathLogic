@@ -1,2 +1,2 @@
 # MathLogic
-This repository contains labs in math logic
+Математическая логика ОГНП-Курс 2020-2021 год
