@@ -1,1 +1,1 @@
-- [] Failing test 7
+- [ ] Failing test 7
