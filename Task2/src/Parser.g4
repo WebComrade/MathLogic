@@ -1,6 +1,8 @@
 grammar Parser;
 @header {
 import tree.*;
+import java.util.stream.Collectors;
+import java.util.List;
 }
 expression returns[Expression expr] :VAR{$expr=new Variable($VAR.text);}
                                     | LB exp1=expression RB{$expr=$exp1.expr;}
@@ -10,17 +12,12 @@ expression returns[Expression expr] :VAR{$expr=new Variable($VAR.text);}
                                     | <assoc=right> exp1=expression IMPL exp2=expression{$expr = new Implication($exp1.expr,$exp2.expr);} ;
 
 
-hypotheses returns[List<Expression> hyps]: exp=expression{$hyps=new ArrayList();$hyps.add($exp.expr);}
-                                          | hyp=hypotheses COMMA exp=expression{$hyp.hyps.add($exp.expr);$hyps=$hyp.hyps;};
-
+hypotheses returns[List<Expression> hyps]: expression (COMMA expression)*{
+    $hyps = $hyps.expression().stream().map(expression->expression.expr).collect(Collectors.toList());
+}
+|{$hyps = new ArrayList<Expression>();};
 condition returns[Condition cond] : hyp=hypotheses PROVES exp=expression{$cond=new Condition($exp.expr,$hyp.hyps);}
            | PROVES exp=expression{$cond=new Condition($exp.expr);};
-
-treep returns[String treed] : VAR{$treed = $VAR.text;}
-      | LB AND COMMA t1=treep COMMA t2=treep RB{$treed = "(&,"+$t1.treed+","+$t2.treed+")";}
-      | LB OR COMMA t1=treep COMMA t2=treep RB{$treed = "(|,"+$t1.treed+","+$t2.treed+")";}
-      | LB IMPL COMMA t1=treep COMMA t2=treep RB{$treed = "(->,"+$t1.treed+","+$t2.treed+")";}
-      | LB NOT t=treep RB{$treed = "(!"+$t.treed+")";};
 
 
 PROVES : '|-';

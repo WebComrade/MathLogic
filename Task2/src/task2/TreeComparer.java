@@ -12,10 +12,8 @@ public class TreeComparer {
     }
 
     private static boolean Compare(Expression expr, Expression axiom, HashMap<Expression,Expression> map){
-//        System.out.println("Compare: "+expr+" and "+axiom);
+
         if(expr==null && axiom==null) return true;
-//        System.out.println("Expr: "+expr.getClass());
-//        System.out.println("Axiom: "+axiom.getClass());
         if(axiom.getClass().equals(Variable.class)){
             Expression exprHash = map.get(axiom);
             if(exprHash!=null && !expr.equals(exprHash)){
