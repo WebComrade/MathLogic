@@ -1,15 +1,18 @@
 package tree;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class Condition {
 
     private Expression taskProof;
-    private List<Expression> hypos;
+    private HashMap<Expression,Integer> hypos = new HashMap<>();
 
     public Condition(Expression task,List<Expression> hypotheses){
-        this.hypos = hypotheses;
+        for(Expression hyp:hypotheses){
+            hypos.putIfAbsent(hyp,hypos.size()+1);
+        }
         this.taskProof=task;
     }
 
@@ -22,7 +25,7 @@ public class Condition {
         return taskProof;
     }
 
-    public List<Expression> getHypos() {
+    public HashMap<Expression, Integer> getHypos() {
         return hypos;
     }
 }

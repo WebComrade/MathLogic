@@ -99,16 +99,16 @@ public class ParserParser extends Parser {
 		public ExpressionContext exp1;
 		public Token VAR;
 		public ExpressionContext exp2;
-		public TerminalNode VAR() { return getToken(ParserParser.VAR, 0); }
-		public TerminalNode LB() { return getToken(ParserParser.LB, 0); }
-		public TerminalNode RB() { return getToken(ParserParser.RB, 0); }
+		public TerminalNode NOT() { return getToken(ParserParser.NOT, 0); }
 		public List<ExpressionContext> expression() {
 			return getRuleContexts(ExpressionContext.class);
 		}
 		public ExpressionContext expression(int i) {
 			return getRuleContext(ExpressionContext.class,i);
 		}
-		public TerminalNode NOT() { return getToken(ParserParser.NOT, 0); }
+		public TerminalNode LB() { return getToken(ParserParser.LB, 0); }
+		public TerminalNode RB() { return getToken(ParserParser.RB, 0); }
+		public TerminalNode VAR() { return getToken(ParserParser.VAR, 0); }
 		public TerminalNode AND() { return getToken(ParserParser.AND, 0); }
 		public TerminalNode OR() { return getToken(ParserParser.OR, 0); }
 		public TerminalNode IMPL() { return getToken(ParserParser.IMPL, 0); }
@@ -149,31 +149,31 @@ public class ParserParser extends Parser {
 			setState(18);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
-			case VAR:
+			case NOT:
 				{
 				setState(7);
-				((ExpressionContext)_localctx).VAR = match(VAR);
-				((ExpressionContext)_localctx).expr = new Variable((((ExpressionContext)_localctx).VAR!=null?((ExpressionContext)_localctx).VAR.getText():null));
+				match(NOT);
+				setState(8);
+				((ExpressionContext)_localctx).exp1 = expression(6);
+				((ExpressionContext)_localctx).expr = new Negation(((ExpressionContext)_localctx).exp1.expr);
 				}
 				break;
 			case LB:
 				{
-				setState(9);
-				match(LB);
-				setState(10);
-				((ExpressionContext)_localctx).exp1 = expression(0);
 				setState(11);
+				match(LB);
+				setState(12);
+				((ExpressionContext)_localctx).exp1 = expression(0);
+				setState(13);
 				match(RB);
 				((ExpressionContext)_localctx).expr = ((ExpressionContext)_localctx).exp1.expr;
 				}
 				break;
-			case NOT:
+			case VAR:
 				{
-				setState(14);
-				match(NOT);
-				setState(15);
-				((ExpressionContext)_localctx).exp1 = expression(4);
-				((ExpressionContext)_localctx).expr = new Negation(((ExpressionContext)_localctx).exp1.expr);
+				setState(16);
+				((ExpressionContext)_localctx).VAR = match(VAR);
+				((ExpressionContext)_localctx).expr = new Variable((((ExpressionContext)_localctx).VAR!=null?((ExpressionContext)_localctx).VAR.getText():null));
 				}
 				break;
 			default:
@@ -198,11 +198,11 @@ public class ParserParser extends Parser {
 						_localctx.exp1 = _prevctx;
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(20);
-						if (!(precpred(_ctx, 3))) throw new FailedPredicateException(this, "precpred(_ctx, 3)");
+						if (!(precpred(_ctx, 5))) throw new FailedPredicateException(this, "precpred(_ctx, 5)");
 						setState(21);
 						match(AND);
 						setState(22);
-						((ExpressionContext)_localctx).exp2 = expression(4);
+						((ExpressionContext)_localctx).exp2 = expression(6);
 						((ExpressionContext)_localctx).expr = new Conjunction(((ExpressionContext)_localctx).exp1.expr,((ExpressionContext)_localctx).exp2.expr);
 						}
 						break;
@@ -213,11 +213,11 @@ public class ParserParser extends Parser {
 						_localctx.exp1 = _prevctx;
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(25);
-						if (!(precpred(_ctx, 2))) throw new FailedPredicateException(this, "precpred(_ctx, 2)");
+						if (!(precpred(_ctx, 4))) throw new FailedPredicateException(this, "precpred(_ctx, 4)");
 						setState(26);
 						match(OR);
 						setState(27);
-						((ExpressionContext)_localctx).exp2 = expression(3);
+						((ExpressionContext)_localctx).exp2 = expression(5);
 						((ExpressionContext)_localctx).expr = new Disjunction(((ExpressionContext)_localctx).exp1.expr,((ExpressionContext)_localctx).exp2.expr);
 						}
 						break;
@@ -228,11 +228,11 @@ public class ParserParser extends Parser {
 						_localctx.exp1 = _prevctx;
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(30);
-						if (!(precpred(_ctx, 1))) throw new FailedPredicateException(this, "precpred(_ctx, 1)");
+						if (!(precpred(_ctx, 3))) throw new FailedPredicateException(this, "precpred(_ctx, 3)");
 						setState(31);
 						match(IMPL);
 						setState(32);
-						((ExpressionContext)_localctx).exp2 = expression(1);
+						((ExpressionContext)_localctx).exp2 = expression(3);
 						((ExpressionContext)_localctx).expr =  new Implication(((ExpressionContext)_localctx).exp1.expr,((ExpressionContext)_localctx).exp2.expr);
 						}
 						break;
@@ -426,11 +426,11 @@ public class ParserParser extends Parser {
 	private boolean expression_sempred(ExpressionContext _localctx, int predIndex) {
 		switch (predIndex) {
 		case 0:
-			return precpred(_ctx, 3);
+			return precpred(_ctx, 5);
 		case 1:
-			return precpred(_ctx, 2);
+			return precpred(_ctx, 4);
 		case 2:
-			return precpred(_ctx, 1);
+			return precpred(_ctx, 3);
 		}
 		return true;
 	}
@@ -441,19 +441,19 @@ public class ParserParser extends Parser {
 		"\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\7\2&\n\2"+
 		"\f\2\16\2)\13\2\3\3\3\3\3\3\7\3.\n\3\f\3\16\3\61\13\3\3\3\3\3\3\3\5\3"+
 		"\66\n\3\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\5\4A\n\4\3\4\2\3\2\5\2\4\6"+
-		"\2\2\2G\2\24\3\2\2\2\4\65\3\2\2\2\6@\3\2\2\2\b\t\b\2\1\2\t\n\7\13\2\2"+
-		"\n\25\b\2\1\2\13\f\7\t\2\2\f\r\5\2\2\2\r\16\7\n\2\2\16\17\b\2\1\2\17\25"+
-		"\3\2\2\2\20\21\7\b\2\2\21\22\5\2\2\6\22\23\b\2\1\2\23\25\3\2\2\2\24\b"+
-		"\3\2\2\2\24\13\3\2\2\2\24\20\3\2\2\2\25\'\3\2\2\2\26\27\f\5\2\2\27\30"+
-		"\7\7\2\2\30\31\5\2\2\6\31\32\b\2\1\2\32&\3\2\2\2\33\34\f\4\2\2\34\35\7"+
-		"\6\2\2\35\36\5\2\2\5\36\37\b\2\1\2\37&\3\2\2\2 !\f\3\2\2!\"\7\5\2\2\""+
-		"#\5\2\2\3#$\b\2\1\2$&\3\2\2\2%\26\3\2\2\2%\33\3\2\2\2% \3\2\2\2&)\3\2"+
-		"\2\2\'%\3\2\2\2\'(\3\2\2\2(\3\3\2\2\2)\'\3\2\2\2*/\5\2\2\2+,\7\4\2\2,"+
-		".\5\2\2\2-+\3\2\2\2.\61\3\2\2\2/-\3\2\2\2/\60\3\2\2\2\60\62\3\2\2\2\61"+
-		"/\3\2\2\2\62\63\b\3\1\2\63\66\3\2\2\2\64\66\b\3\1\2\65*\3\2\2\2\65\64"+
-		"\3\2\2\2\66\5\3\2\2\2\678\5\4\3\289\7\3\2\29:\5\2\2\2:;\b\4\1\2;A\3\2"+
-		"\2\2<=\7\3\2\2=>\5\2\2\2>?\b\4\1\2?A\3\2\2\2@\67\3\2\2\2@<\3\2\2\2A\7"+
-		"\3\2\2\2\b\24%\'/\65@";
+		"\2\2\2G\2\24\3\2\2\2\4\65\3\2\2\2\6@\3\2\2\2\b\t\b\2\1\2\t\n\7\b\2\2\n"+
+		"\13\5\2\2\b\13\f\b\2\1\2\f\25\3\2\2\2\r\16\7\t\2\2\16\17\5\2\2\2\17\20"+
+		"\7\n\2\2\20\21\b\2\1\2\21\25\3\2\2\2\22\23\7\13\2\2\23\25\b\2\1\2\24\b"+
+		"\3\2\2\2\24\r\3\2\2\2\24\22\3\2\2\2\25\'\3\2\2\2\26\27\f\7\2\2\27\30\7"+
+		"\7\2\2\30\31\5\2\2\b\31\32\b\2\1\2\32&\3\2\2\2\33\34\f\6\2\2\34\35\7\6"+
+		"\2\2\35\36\5\2\2\7\36\37\b\2\1\2\37&\3\2\2\2 !\f\5\2\2!\"\7\5\2\2\"#\5"+
+		"\2\2\5#$\b\2\1\2$&\3\2\2\2%\26\3\2\2\2%\33\3\2\2\2% \3\2\2\2&)\3\2\2\2"+
+		"\'%\3\2\2\2\'(\3\2\2\2(\3\3\2\2\2)\'\3\2\2\2*/\5\2\2\2+,\7\4\2\2,.\5\2"+
+		"\2\2-+\3\2\2\2.\61\3\2\2\2/-\3\2\2\2/\60\3\2\2\2\60\62\3\2\2\2\61/\3\2"+
+		"\2\2\62\63\b\3\1\2\63\66\3\2\2\2\64\66\b\3\1\2\65*\3\2\2\2\65\64\3\2\2"+
+		"\2\66\5\3\2\2\2\678\5\4\3\289\7\3\2\29:\5\2\2\2:;\b\4\1\2;A\3\2\2\2<="+
+		"\7\3\2\2=>\5\2\2\2>?\b\4\1\2?A\3\2\2\2@\67\3\2\2\2@<\3\2\2\2A\7\3\2\2"+
+		"\2\b\24%\'/\65@";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

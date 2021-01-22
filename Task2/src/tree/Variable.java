@@ -20,10 +20,14 @@ public class Variable implements Expression{
         return this;
     }
 
+    @Override
+    public void toText(StringBuilder builder) {
+        builder.append(value);
+    }
 
     @Override
     public String toString() {
-        return value;
+        return toText();
     }
 
     @Override
@@ -32,12 +36,14 @@ public class Variable implements Expression{
     }
 
     @Override
-    public String toTree() {
-        return value;
-    }
-
-    @Override
     public int hashCode() {
         return Objects.hash(value);
     }
 }
+
+//    @Override
+//    public String toTree() {
+//        return value;
+//    }
+
+

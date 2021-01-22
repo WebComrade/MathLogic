@@ -11,6 +11,12 @@ public class Negation implements Expression {
     }
 
     @Override
+    public void toText(StringBuilder builder) {
+        builder.append("!");
+        expr.toText(builder);
+    }
+
+    @Override
     public Expression getRight() {
         return null;
     }
@@ -23,13 +29,13 @@ public class Negation implements Expression {
 
     @Override
     public String toString() {
-        return "!"+expr;
+        return toText();
     }
 
-    @Override
-    public String toTree() {
-        return "(!"+expr.toTree()+")";
-    }
+//    @Override
+//    public String toTree() {
+//        return "(!"+expr.toTree()+")";
+//    }
 
     @Override
     public boolean equals(Object o) {

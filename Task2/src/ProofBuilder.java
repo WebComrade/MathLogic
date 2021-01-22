@@ -10,12 +10,18 @@ import java.util.*;
 public class ProofBuilder {
     private static final Scanner sc = new Scanner(System.in);
 
+    private static Integer finalIndex;
+
     private static final HashMap<Expression, Integer> lefts=new HashMap<>();
     private static final HashMap<Expression, List<Integer>> rights=new HashMap<>();
     private static final HashMap<Expression,List<Expression>> implications = new HashMap<>();
     private static final HashMap<Expression,List<Integer>> implicationsIndex = new HashMap<>();
+    private static Expression mainExpr;
+    private static HashMap<Expression,Integer> hypos = new HashMap<>();
 
-    private static List<Expression> hypos = new ArrayList<>();
+    private static final List<Expression> axiomList = AxiomSchemes.getAxiomsList();
+
+
     public static  TreeMap<Integer,Dokvo> proved = new TreeMap<>();
     private static TreeMap<Integer,Dokvo> used = new TreeMap<>();
 
@@ -58,73 +64,85 @@ public class ProofBuilder {
         ParserLexer lexer = new ParserLexer(CharStreams.fromString(str));
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         ParserParser parser = new ParserParser(tokens);
-
-        Condition condition = parser.condition().cond;
+        ParserParser.ConditionContext context = parser.condition();
+        Condition condition = context.cond;
+        String hypothesis = context.hypotheses().getText();
         hypos = condition.getHypos();
+        mainExpr = condition.getTaskProof();
 
-        Expression curExpr;
+        Expression curExpr=null;
         int index = 0;
 
-        do{
+//        do{
+        while(sc.hasNextLine()) {
             str = sc.nextLine();
             lexer.setInputStream(CharStreams.fromString(str));
             parser.setTokenStream(new CommonTokenStream(lexer));
             curExpr = parser.expression().expr;
+            Dokvo dokvo = new Dokvo(curExpr);
+            if (lefts.get(curExpr) != null) {
+                continue;
+            }
 
-            if(proved.containsValue(curExpr)){
-                continue;}
+            if(curExpr.equals(mainExpr)){
+                finalIndex=index;
+            }
 
             List<Integer> mp = findMP(curExpr, index);
-            Dokvo dokvo = new Dokvo(curExpr);
 
-            if(isHypothesis(dokvo)){
-            }
-            else if(isAxiom(dokvo)){
-            }
-            else if(mp!=null) {
-                dokvo.setMP(mp.get(0),mp.get(1));
-            }
-            else {
+            if (isHypothesis(dokvo)) {
+            } else if (isAxiom(dokvo)) {
+            } else if (mp != null) {
+                dokvo.setMP(mp.get(0), mp.get(1));
+            } else {
                 System.out.println("Proof is incorrect");
                 return;
             }
             proved.put(index, dokvo);
             index++;
-        }while(!curExpr.equals(condition.getTaskProof()));
 
-        if(!hypos.isEmpty())
-            for(int i=0;i<hypos.size();i++) {
-                System.out.print(hypos.get(i));
-                if (i != hypos.size() - 1) System.out.print(", ");
-                else System.out.println("|- " + condition.getTaskProof());
+        }
+        if(finalIndex!=null && curExpr.equals(mainExpr)) {
+//        }while(!curExpr.equals(condition.getTaskProof()));
+
+//        if(!hypos.isEmpty())
+//            for(int i=0;i<hypos.size();i++) {
+//                System.out.print(hypos.get(i));
+//                if (i != hypos.size() - 1) System.out.print(", ");
+//                else System.out.println("|- " + condition.getTaskProof());
+//            }
+//        else
+            System.out.println(hypothesis + "|- " + mainExpr);
+
+            used = getUsed();
+            HashMap<Integer, Integer> newIndex = new HashMap<>();
+            List<Integer> proofsOrder = new ArrayList<>(used.keySet());
+
+            for (index = 0; index < proofsOrder.size(); index++) {
+                Dokvo dokvo = used.get(proofsOrder.get(index));
+                Expression expression = dokvo.getExpr();
+                newIndex.put(proofsOrder.get(index), index);
+
+                if (dokvo.isMP()) {
+                    int leftIndex = newIndex.get(dokvo.getLeftIndex()) + 1;
+                    int implIndex = newIndex.get(dokvo.getImplicationIndex()) + 1;
+                    System.out.printf("[%d. M.P. %d, %d] %s\n", index + 1, implIndex, leftIndex, expression);
+                }
+
+                Integer hypoIndex = dokvo.getHypothesisIndex();
+                if (hypoIndex != null) {
+                    System.out.printf("[%d. Hypothesis %d] %s\n", index + 1, hypoIndex, expression);
+                }
+                Integer axiomIndex = dokvo.getAxiomIndex();
+                if (axiomIndex != null) {
+                    System.out.printf("[%d. Ax. sch. %d] %s\n", index + 1, axiomIndex, expression);
+                }
+
             }
-        else
-            System.out.println("|- "+ condition.getTaskProof());
-
-        used = getUsed();
-        HashMap<Integer,Integer> newIndex = new HashMap<>();
-        List<Integer> proofsOrder = new ArrayList<>(used.keySet());
-
-        for(int i=0;i<proofsOrder.size();i++){
-            Dokvo dokvo = used.get(proofsOrder.get(i));
-            Expression expression = dokvo.getExpr();
-            newIndex.put(proofsOrder.get(i),i);
-
-            if(dokvo.isMP()){
-                int leftIndex = newIndex.get(dokvo.getLeftIndex())+1;
-                int implIndex = newIndex.get(dokvo.getImplicationIndex())+1;
-                System.out.printf("[%d. M.P. %d, %d] %s\n",i+1, implIndex, leftIndex, expression);
-            }
-
-            Integer hypoIndex = dokvo.getHypothesisIndex();
-            if(hypoIndex!=null){
-                System.out.printf("[%d. Hypothesis %d] %s\n", i+1, hypoIndex, expression);
-            }
-            Integer axiomIndex = dokvo.getAxiomIndex();
-            if(axiomIndex!=null){
-                System.out.printf("[%d. Ax. sch. %d] %s\n", i+1, axiomIndex, expression);
-            }
-
+        }
+        else{
+            System.out.println("Proof is incorrect");
+            return;
         }
 
 
@@ -132,7 +150,7 @@ public class ProofBuilder {
     }
 
     private static boolean isAxiom(Dokvo dokvo){
-        List<Expression> list = AxiomSchemes.getAxiomsList();
+        List<Expression> list = axiomList;
         for(int i=1;i<=list.size();i++){
             if(TreeComparer.Compare(dokvo.getExpr(),list.get(i-1))){
                 dokvo.setAxiom(i);
@@ -143,19 +161,16 @@ public class ProofBuilder {
     }
 
     private static boolean isHypothesis(Dokvo dokvo){
-        if(hypos!=null)
-        for(int i=1;i<=hypos.size();i++){
-            if(hypos.get(i-1).equals(dokvo.getExpr())){
-            dokvo.setHypothesis(i);
+        if(hypos.get(dokvo.getExpr())!=null){
+            dokvo.setHypothesis(hypos.get(dokvo.getExpr()));
             return true;
-            }
         }
         return false;
     }
 
 
     private static TreeMap<Integer,Dokvo> getUsed(){
-        int dokvoIndex = proved.size()-1;
+        int dokvoIndex = finalIndex;
         TreeMap<Integer,Dokvo> dokvos = new TreeMap<>();
         Dokvo dokvo = proved.get(dokvoIndex);
         if(dokvo.isMP()){

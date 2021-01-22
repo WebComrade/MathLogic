@@ -64,4 +64,8 @@ public class Dokvo {
         return this.expr.equals(dokvo.getExpr());
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(expr);
+    }
 }

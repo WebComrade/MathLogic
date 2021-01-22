@@ -24,14 +24,23 @@ public class Disjunction implements Expression {
 
 
     @Override
-    public String toString() {
-        return "("+left+" | "+right+")";
+    public void toText(StringBuilder builder) {
+        builder.append("(");
+        left.toText(builder);
+        builder.append(" | ");
+        right.toText(builder);
+        builder.append(")");
     }
 
     @Override
-    public String toTree() {
-        return "(|,"+left.toTree()+","+right.toTree()+")";
+    public String toString() {
+        return toText();
     }
+
+//    @Override
+//    public String toTree() {
+//        return "(|,"+left.toTree()+","+right.toTree()+")";
+//    }
 
     @Override
     public boolean equals(Object o) {

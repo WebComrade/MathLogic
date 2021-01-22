@@ -22,16 +22,24 @@ public class Conjunction implements Expression{
         return left;
     }
 
+    @Override
+    public void toText(StringBuilder builder) {
+        builder.append("(");
+        left.toText(builder);
+        builder.append(" & ");
+        right.toText(builder);
+        builder.append(")");
+    }
 
     @Override
     public String toString() {
-        return "("+left+" & "+right+")";
+        return toText();
     }
 
-    @Override
-    public String toTree() {
-        return "(&,"+left.toTree()+","+right.toTree()+")";
-    }
+//    @Override
+//    public String toTree() {
+//        return "(&,"+left.toTree()+","+right.toTree()+")";
+//    }
 
     @Override
     public boolean equals(Object o) {

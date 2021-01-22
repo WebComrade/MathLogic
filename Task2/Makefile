@@ -4,7 +4,7 @@ all:dir
 	javac -cp "$(ANTLR)" src/*.java src/tree/*.java src/task2/*.java -d out
 
 run:
-	java -Xmx512m -cp out:$(ANTLR) Main
+	java -Xmx512m -Xms512m -cp out:$(ANTLR) Main
 
 dir:
 	mkdir out
